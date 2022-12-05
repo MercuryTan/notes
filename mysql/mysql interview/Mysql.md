@@ -22,7 +22,7 @@ MySQL中索引分三类：B+树索引、Hash索引、全文索引
   - MyISAM的回表操作是十分快速的，因为是拿着地址偏移量直接到文件中取数据的，反观InnoDB是通过获取主键之后再去聚簇索引里找记录，虽然说也不慢，但还是比不上直接用地址去访问。
   - InnoDB要求表必须有主键 （ MyISAM可以没有 ）。如果没有显式指定，则MySQL系统会自动选择一个可以非空且唯一标识数据记录的列作为主键。如果不存在这种列，则MySQL自动为InnoDB表生成一个隐含字段作为主键，这个字段长度为6个字节，类型为长整型。
 
-  ![image-20220709183820796](image-20220709183820796.png)
+  ![images/image-20220709183820796](images/image-20220709183820796.png)
 
   
 
@@ -54,7 +54,7 @@ CREATE TABLE index_demo(c1 INT,c2 INT,c3 CHAR(1),PRIMARY KEY(c1)) ;
 
 index_demo表的简化的行格式示意图如下：
 
-![image-20220709071051043](image-20220709071051043.png)
+![images/image-20220709071051043](images/image-20220709071051043.png)
 
 
 
@@ -69,13 +69,13 @@ index_demo表的简化的行格式示意图如下：
 
 将`其他信息`项暂时去掉并把它竖起来的效果就是这样：
 
-![image-20220709071958145](image-20220709071958145.png)
+![images/image-20220709071958145](images/image-20220709071958145.png)
 
 
 
 把一些记录放到页里的示意图就是（这里一页就是一个磁盘块，代表一次IO）：
 
-![image-20220709072138395](image-20220709072138395.png)
+![images/image-20220709072138395](images/image-20220709072138395.png)
 
 name age sex
 
@@ -86,7 +86,7 @@ name age sex
 - 下一个数据页中用户记录的主键值必须大于上一个页中用户记录的主键值
 - 给所有的页建立目录项
 
-![image-20220709073749310](image-20220709073749310.png)
+![images/image-20220709073749310](images/image-20220709073749310.png)
 
 以`页28`为例，它对应`目录项2` ，这个目录项中包含着该页的`页号28`以及该页中用户记录的`最小主键值 5`。我们只需要把几个目录项在物理存储器上连续存储（比如：数组），就可以实现根据主键值快速查找某条记录的功能了。`比如：查找主键值为 20 的记录，具体查找过程分两步：`
 
@@ -101,7 +101,7 @@ name age sex
 
 我们新分配一个编号为30的页来专门存储`目录项记录`，页10、28、9、20专门存储`用户记录`： 
 
-![image-20220709073749310](image-20220709074801215.png)
+![images/image-20220709073749310](images/image-20220709074801215.png)
 
 ![img](1557565-20220429110413866-1755798300.png)
 
@@ -121,7 +121,7 @@ name age sex
 
 我们生成了一个存储更高级目录项的 页33 ，这个页中的两条记录分别代表页30和页32，如果用户记录的主键值在 `[1, 320)` 之间，则到页30中查找更详细的目录项记录，如果主键值 不小于320 的话，就到页32中查找更详细的目录项记录。**这个数据结构，它的名称是 B+树 。** 
 
-![image-20220709080648851](image-20220709080648851.png)
+![images/image-20220709080648851](images/image-20220709080648851.png)
 
 #### 005	聚簇索引与非聚簇索引b+树实现有什么区别？
 
@@ -166,7 +166,7 @@ name age sex
 
 **例如，**`以c2列作为搜索条件`，那么需要使`用c2列创建一棵B+树`，如下所示：
 
-![image-20220709130937991](image-20220709130937991.png)
+![images/image-20220709130937991](images/image-20220709130937991.png)
 
 
 
@@ -186,11 +186,11 @@ name age sex
 
 **一张表可以有多个非聚簇索引：**
 
-![image-20220709134109900](image-20220709134109900-16668534893372.png)
+![images/image-20220709134109900](images/image-20220709134109900-16668534893372.png)
 
 #### 006	说一下B+树中聚簇索引的查找（匹配）逻辑
 
-![image-20220709080648851](image-20220709080648851.png)
+![images/image-20220709080648851](images/image-20220709080648851.png)
 
 #### 007	说一下B+树中非聚簇索引的查找（匹配）逻辑
 
@@ -202,7 +202,7 @@ name age sex
 4. 但是这个B+树的叶子节点`只存储了c2和c1（主键）`两个列，所以我们必须`再根据主键值去聚簇索引中再查找`一遍完整的用户记录。
 5. like 张%
 
-![image-20220709130937991](image-20220709130937991.png)
+![images/image-20220709130937991](images/image-20220709130937991.png)
 
 #### 008	平衡二叉树，红黑树，B树和B+树的区别是什么？都有哪些应用场景？
 
@@ -224,7 +224,7 @@ AVL树全称G.M. Adelson-Velsky和E.M. Landis，这是两个人的人名。
 - 它是一棵空树或它的左右两个子树的高度差的绝对值不超过1
 - 并且左右两个子树都是一棵平衡二叉树。
 
-![image-20220708235509010](image-20220708235509010.png)
+![images/image-20220708235509010](images/image-20220708235509010.png)
 
 AVL的生成演示：https://www.cs.usfca.edu/~galles/visualization/AVLtree.html
 
@@ -234,11 +234,11 @@ AVL的生成演示：https://www.cs.usfca.edu/~galles/visualization/AVLtree.html
 
 众所周知，IO操作的效率很低，在大量数据存储中，查询时我们不能一下子将所有数据加载到内存中，只能逐节点加载（一个节点一次IO）。如果我们利用二叉树作为索引结构，`那么磁盘的IO次数和索引树的高度是相关的`。平衡二叉树由于树深度过大而造成磁盘IO读写过于频繁，进而导致效率低下。
 
-![image-20220708233351509](image-20220708233351509.png)
+![images/image-20220708233351509](images/image-20220708233351509.png)
 
 为了提高查询效率，就需要 减少磁盘IO数 。`为了减少磁盘IO的次数，就需要尽量降低树的高度` ，需要把原来“瘦高”的树结构变的“矮胖”，树的每层的分叉越多越好。针对同样的数据，如果我们把二叉树改成 三叉树：
 
-![image-20220708235725124](image-20220708235725124.png)
+![images/image-20220708235725124](images/image-20220708235725124.png)
 
 上面的例子中，我们将二叉树变成了三叉树，降低了树的高度。如果能够在一个节点中存放更多的数据，我们还可以进一步减少节点的数量，从而进一步降低树的高度。这就是`多叉树`。
 
@@ -247,7 +247,7 @@ AVL的生成演示：https://www.cs.usfca.edu/~galles/visualization/AVLtree.html
 - 左子树全部为空，从形式上看，更像一个单链表，不能发挥BST的优势。
 - `解决方案：平衡二叉树(AVL)` 
 
-![image-20220708231622916](image-20220708231622916.png)
+![images/image-20220708231622916](images/image-20220708231622916.png)
 
 红黑树
 
@@ -257,11 +257,11 @@ AVL的生成演示：https://www.cs.usfca.edu/~galles/visualization/AVLtree.html
 
 在这个棵严格的平台树上又进化为“红黑树”{是一个非严格的平衡树 左子树与右子树的高度差不能超过1}，红黑树的长子树只要不超过短子树的两倍即可！
 
-![image-20221027154142690](image-20221027154142690.png)
+![images/image-20221027154142690](images/image-20221027154142690.png)
 
 当再次插入7的时候，这棵树就会发生旋转
 
-![image-20221027154120483](image-20221027154120483.png)
+![images/image-20221027154120483](images/image-20221027154120483.png)
 
 
 
@@ -317,7 +317,7 @@ SHOW ENGINE INNODB STATUS \G ;
 
 下面2-3树就是一颗多叉树
 
-![image-20220709002223882](image-20220709002223882.png)
+![images/image-20220709002223882](images/image-20220709002223882.png)
 
 2-3树具有如下特点：
 
@@ -327,13 +327,13 @@ SHOW ENGINE INNODB STATUS \G ;
 - 2-3树是由二节点和三节点构成的树。
 - 对于三节点的子树的值大小仍然遵守 BST 二叉排序树的规则。
 
-![image-20220709002554341](image-20220709002554341.png)
+![images/image-20220709002554341](images/image-20220709002554341.png)
 
 
 
 **2-3-4树**
 
-![image-20220709004531952](image-20220709004531952.png)
+![images/image-20220709004531952](images/image-20220709004531952.png)
 
 
 
@@ -492,7 +492,7 @@ where c3=?
 
 最左前缀
 
-![image-20220712002627554](image-20220712002627554.png)
+![images/image-20220712002627554](images/image-20220712002627554.png)
 
 
 
@@ -894,7 +894,7 @@ EXPLAIN SELECT * FROM emp WHERE emp.name IS NOT NULL
 
 ## 二 MySQL 内部技术架构
 
-![image-20221028155608009](image-20221028155608009.png)
+![images/image-20221028155608009](images/image-20221028155608009.png)
 
 ### ![img](29f7e85dea17e100b38b450d9949a330.png)047 Mysql内部支持缓存查询吗？
 
@@ -925,7 +925,7 @@ mysql缓存的限制
 
 ### 050 Mysql内部有哪些核心模块组成，作用是什么？
 
-![image-20220627113443003](image-20220627113443003.png)
+![images/image-20220627113443003](images/image-20220627113443003.png)
 
 
 
@@ -975,7 +975,7 @@ MySQL服务器之外的客户端程序，与具体的语言相关，例如Java�
 
 - 典型的解析树如下：
 
-![image-20220702002430362](image-20220702002430362.png)
+![images/image-20220702002430362](images/image-20220702002430362.png)
 
 
 
@@ -1015,7 +1015,7 @@ MySQL服务器之外的客户端程序，与具体的语言相关，例如Java�
 
 1.5、查询流程说明
 
-![image-20220627141453944](执行流程.png)
+![images/image-20220627141453944](执行流程.png)
 
 **首先，**`MySQL客户端通过协议与MySQL服务器建连接，通过SQL接口发送SQL语句，先检查查询缓存，如果命中，直接返回结果，否则进行语句解析。`也就是说，在解析查询之前，服务器会先访问查询缓存，如果某个查询结果已经位于缓存中，服务器就不会再对查询进行解析、优化、以及执行。它仅仅将缓存中的结果返回给用户即可，这将大大提高系统的性能。
 
@@ -1051,7 +1051,7 @@ SHOW ENGINES;
 
 下面的结果表示MySQL中默认使用的存储引擎是InnoDB，支持事务，行锁，外键，支持分布式事务(XA)，支持保存点(回滚)
 
-![image-20220703164220030](image-20220703164220030.png)
+![images/image-20220703164220030](images/image-20220703164220030.png)
 
 
 
@@ -1061,7 +1061,7 @@ SHOW ENGINES;
 SHOW VARIABLES LIKE '%default_storage_engine%';
 ```
 
-![image-20220703170334348](image-20220703170334348.png)
+![images/image-20220703170334348](images/image-20220703170334348.png)
 
 
 
@@ -2226,7 +2226,7 @@ INSERT INTO t4(content1, content2) VALUES(CONCAT('t4_',FLOOR(1+RAND()*1000)), CO
 EXPLAIN SELECT * FROM t1;
 ```
 
-![image-20220710101402666](image-20220710101402666.png)
+![images/image-20220710101402666](images/image-20220710101402666.png)
 
 
 
@@ -2238,7 +2238,7 @@ EXPLAIN SELECT * FROM t1;
 EXPLAIN SELECT * FROM t1 INNER JOIN t2;
 ```
 
-![image-20220711122444380](image-20220711122444380.png)
+![images/image-20220711122444380](images/image-20220711122444380.png)
 
 
 
@@ -2254,7 +2254,7 @@ EXPLAIN SELECT * FROM t1 INNER JOIN t2;
 EXPLAIN SELECT * FROM t1, t2, t3;
 ```
 
-![image-20220710000757241](image-20220710000757241.png)
+![images/image-20220710000757241](images/image-20220710000757241.png)
 
 
 
@@ -2268,7 +2268,7 @@ EXPLAIN SELECT t1.id FROM t1 WHERE t1.id =(
 );
 ```
 
-![image-20220710000950098](image-20220710000950098.png)
+![images/image-20220710000950098](images/image-20220710000950098.png)
 
 `注意：`查询优化器可能对涉及子查询的语句进行优化，`转为连接查询`
 
@@ -2276,7 +2276,7 @@ EXPLAIN SELECT t1.id FROM t1 WHERE t1.id =(
 EXPLAIN SELECT * FROM t1 WHERE content IN (SELECT content FROM t2 WHERE content = 'a');
 ```
 
-![image-20220711123408605](image-20220711123408605.png)
+![images/image-20220711123408605](images/image-20220711123408605.png)
 
 
 
@@ -2286,7 +2286,7 @@ EXPLAIN SELECT * FROM t1 WHERE content IN (SELECT content FROM t2 WHERE content 
 EXPLAIN SELECT * FROM t1 UNION SELECT * FROM t2;
 ```
 
-![image-20220710001512891](image-20220710001512891.png)
+![images/image-20220710001512891](images/image-20220710001512891.png)
 
 
 
@@ -2310,7 +2310,7 @@ EXPLAIN SELECT * FROM t1 UNION SELECT * FROM t2;
 EXPLAIN SELECT * FROM t1;
 ```
 
-![image-20220710001930811](image-20220710001930811.png)
+![images/image-20220710001930811](images/image-20220710001930811.png)
 
 
 
@@ -2321,7 +2321,7 @@ EXPLAIN SELECT * FROM t1;
 EXPLAIN SELECT * FROM t3 WHERE id = ( SELECT id FROM t2 WHERE content= 'a');
 ```
 
-![image-20220710002145309](image-20220710002145309.png)
+![images/image-20220710002145309](images/image-20220710002145309.png)
 
 
 
@@ -2331,7 +2331,7 @@ EXPLAIN SELECT * FROM t3 WHERE id = ( SELECT id FROM t2 WHERE content= 'a');
 EXPLAIN SELECT * FROM t3 WHERE id = ( SELECT id FROM t2 WHERE content = t3.content);
 ```
 
-![image-20220710002444782](image-20220710002444782.png)
+![images/image-20220710002444782](images/image-20220710002444782.png)
 
 
 
@@ -2342,7 +2342,7 @@ EXPLAIN SELECT * FROM t3
 WHERE id = ( SELECT id FROM t2 WHERE content = @@character_set_server);
 ```
 
-![image-20220710002604613](image-20220710002604613.png)
+![images/image-20220710002604613](images/image-20220710002604613.png)
 
 
 
@@ -2356,7 +2356,7 @@ UNION
 SELECT * FROM t2 WHERE id = 1;
 ```
 
-![image-20220710003049587](image-20220710003049587.png)
+![images/image-20220710003049587](images/image-20220710003049587.png)
 
 
 
@@ -2371,7 +2371,7 @@ SELECT * FROM t2 WHERE id = 1;
  );
 ```
 
-![image-20220710110732730](image-20220710110732730.png)
+![images/image-20220710110732730](images/image-20220710110732730.png)
 
 
 
@@ -2385,7 +2385,7 @@ EXPLAIN SELECT * FROM (
 
 这里的`<derived2>`就是在id为2的查询中产生的派生表。
 
-![image-20220710153504037](image-20220710153504037.png)
+![images/image-20220710153504037](images/image-20220710153504037.png)
 
 
 
@@ -2395,7 +2395,7 @@ EXPLAIN SELECT * FROM (
 EXPLAIN SELECT * FROM (SELECT * FROM t1 WHERE content = 't1_832') AS derived_t1;
 ```
 
-![image-20220710153921679](image-20220710153921679.png)
+![images/image-20220710153921679](images/image-20220710153921679.png)
 
 
 
@@ -2405,7 +2405,7 @@ EXPLAIN SELECT * FROM (SELECT * FROM t1 WHERE content = 't1_832') AS derived_t1;
  EXPLAIN SELECT * FROM t1 WHERE content IN (SELECT content FROM t2);
 ```
 
-![image-20220710155650935](image-20220710155650935.png)
+![images/image-20220710155650935](images/image-20220710155650935.png)
 
 
 
@@ -2436,7 +2436,7 @@ EXPLAIN SELECT * FROM (SELECT * FROM t1 WHERE content = 't1_832') AS derived_t1;
 EXPLAIN SELECT * FROM t1;
 ```
 
-![image-20220712065946659](image-20220712065946659.png)
+![images/image-20220712065946659](images/image-20220712065946659.png)
 
 
 
@@ -2449,14 +2449,14 @@ EXPLAIN SELECT * FROM t1;
 EXPLAIN SELECT id FROM t1;
 ```
 
-![image-20220712065815768](image-20220712065815768.png)
+![images/image-20220712065815768](images/image-20220712065815768.png)
 
 ```sql
 -- 只需要读取二级索引，就可以在二级索引中获取到想要的数据，不需要再根据叶子节点中的id做回表操作
 EXPLAIN SELECT id, deptId FROM t_emp;
 ```
 
-![image-20220712065922882](image-20220712065922882.png)
+![images/image-20220712065922882](images/image-20220712065922882.png)
 
 
 
@@ -2466,7 +2466,7 @@ EXPLAIN SELECT id, deptId FROM t_emp;
 EXPLAIN SELECT * FROM t1 WHERE id IN (1, 2, 3);
 ```
 
-![image-20220712070042666](image-20220712070042666.png)
+![images/image-20220712070042666](images/image-20220712070042666.png)
 
 
 
@@ -2476,7 +2476,7 @@ EXPLAIN SELECT * FROM t1 WHERE id IN (1, 2, 3);
 EXPLAIN SELECT * FROM t_emp WHERE deptId = 1;
 ```
 
-![image-20220712070727963](image-20220712070727963.png)
+![images/image-20220712070727963](images/image-20220712070727963.png)
 
 
 
@@ -2486,7 +2486,7 @@ EXPLAIN SELECT * FROM t_emp WHERE deptId = 1;
 EXPLAIN SELECT * FROM t1, t2 WHERE t1.id = t2.id;
 ```
 
-![image-20220712070851089](image-20220712070851089.png)
+![images/image-20220712070851089](images/image-20220712070851089.png)
 
 
 
@@ -2496,7 +2496,7 @@ EXPLAIN SELECT * FROM t1, t2 WHERE t1.id = t2.id;
 EXPLAIN SELECT * FROM t1 WHERE id = 1;
 ```
 
-![image-20220712070944090](image-20220712070944090.png)
+![images/image-20220712070944090](images/image-20220712070944090.png)
 
 
 
@@ -2508,7 +2508,7 @@ INSERT INTO t VALUES(1);
 EXPLAIN SELECT * FROM t;
 ```
 
-![image-20220711125730163](image-20220711125730163.png)
+![images/image-20220711125730163](images/image-20220711125730163.png)
 
 
 
@@ -2520,7 +2520,7 @@ EXPLAIN SELECT * FROM t;
 EXPLAIN SELECT * FROM t1 WHERE content IN (SELECT content1 FROM t4 WHERE t1.content = t4.content2) OR content = 'a';
 ```
 
-![image-20220712071057817](image-20220712071057817.png)
+![images/image-20220712071057817](images/image-20220712071057817.png)
 
 
 
@@ -2530,7 +2530,7 @@ EXPLAIN SELECT * FROM t1 WHERE content IN (SELECT content1 FROM t4 WHERE t1.cont
 EXPLAIN SELECT * FROM t1 WHERE id IN (SELECT id FROM t2 WHERE t1.content = t2.content) OR content = 'a';
 ```
 
-![image-20220712071138320](image-20220712071138320.png)
+![images/image-20220712071138320](images/image-20220712071138320.png)
 
 
 
@@ -2540,7 +2540,7 @@ EXPLAIN SELECT * FROM t1 WHERE id IN (SELECT id FROM t2 WHERE t1.content = t2.co
 EXPLAIN SELECT * FROM t_emp WHERE deptId = 1 OR id = 1;
 ```
 
-![image-20220711132125501](image-20220711132125501.png)
+![images/image-20220711132125501](images/image-20220711132125501.png)
 
 
 
@@ -2550,7 +2550,7 @@ EXPLAIN SELECT * FROM t_emp WHERE deptId = 1 OR id = 1;
 EXPLAIN SELECT * FROM t_emp WHERE deptId = 1 OR deptId IS NULL;
 ```
 
-![image-20220711131831315](image-20220711131831315.png)
+![images/image-20220711131831315](images/image-20220711131831315.png)
 
 
 
@@ -2568,7 +2568,7 @@ EXPLAIN SELECT * FROM t_emp WHERE deptId = 1 OR deptId IS NULL;
 EXPLAIN SELECT id FROM t1 WHERE id = 1;
 ```
 
-![image-20220710142152514](image-20220710142152514.png)
+![images/image-20220710142152514](images/image-20220710142152514.png)
 
 
 
@@ -2592,7 +2592,7 @@ EXPLAIN SELECT * FROM t_emp WHERE age = 30 AND `name` = 'ab%';
 EXPLAIN SELECT * FROM t_emp WHERE age = 30;
 ```
 
-![image-20220710130548971](image-20220710130548971.png)
+![images/image-20220710130548971](images/image-20220710130548971.png)
 
 
 
@@ -2608,7 +2608,7 @@ EXPLAIN SELECT * FROM t1, t2 WHERE t1.id = t2.id;
 EXPLAIN SELECT * FROM t_emp WHERE age = 30;
 ```
 
-![image-20220709211819944](image-20220709211819944.png)
+![images/image-20220709211819944](images/image-20220709211819944.png)
 
 
 
@@ -2624,7 +2624,7 @@ EXPLAIN SELECT * FROM t_emp WHERE empno = '10001';
 EXPLAIN SELECT * FROM t_emp WHERE deptId = 1;
 ```
 
-![image-20220710131916240](image-20220710131916240.png)
+![images/image-20220710131916240](images/image-20220710131916240.png)
 
 
 
@@ -2641,7 +2641,7 @@ EXPLAIN SELECT * FROM t_emp WHERE deptId = 1;
 EXPLAIN SELECT * FROM t_emp WHERE `name` = '风清扬';
 ```
 
-![image-20220709212722601](image-20220709212722601.png)
+![images/image-20220709212722601](images/image-20220709212722601.png)
 
 
 
@@ -2657,7 +2657,7 @@ EXPLAIN SELECT * FROM t_emp WHERE `name` = '风清扬';
 EXPLAIN SELECT * FROM t_emp WHERE 1 != 1;
 ```
 
-![image-20220709231638201](image-20220709231638201.png)
+![images/image-20220709231638201](images/image-20220709231638201.png)
 
 
 
@@ -2667,7 +2667,7 @@ EXPLAIN SELECT * FROM t_emp WHERE 1 != 1;
 EXPLAIN SELECT * FROM t_emp WHERE `name` = '风清扬';
 ```
 
-![image-20220709215122017](image-20220709215122017.png)
+![images/image-20220709215122017](images/image-20220709215122017.png)
 
 
 
@@ -2677,7 +2677,7 @@ EXPLAIN SELECT * FROM t_emp WHERE `name` = '风清扬';
 EXPLAIN SELECT DISTINCT content FROM t1;
 ```
 
-![image-20220710181100102](image-20220710181100102.png)
+![images/image-20220710181100102](images/image-20220710181100102.png)
 
 
 
@@ -2689,7 +2689,7 @@ EXPLAIN SELECT DISTINCT content FROM t1;
 EXPLAIN SELECT * FROM t1 ORDER BY id;
 ```
 
-![image-20220710172607190](image-20220710172607190.png)
+![images/image-20220710172607190](images/image-20220710172607190.png)
 
 如果排序操作无法使用到索引，只能在内存中（记录较少时）或者磁盘中（记录较多时）进行排序（filesort），如下所示：
 
@@ -2697,7 +2697,7 @@ EXPLAIN SELECT * FROM t1 ORDER BY id;
 EXPLAIN SELECT * FROM t1 ORDER BY content;
 ```
 
-![image-20220710172926396](image-20220710172926396.png)
+![images/image-20220710172926396](images/image-20220710172926396.png)
 
 
 
@@ -2707,13 +2707,13 @@ EXPLAIN SELECT * FROM t1 ORDER BY content;
  EXPLAIN SELECT id, content1 FROM t4;
 ```
 
-![image-20220712071716131](image-20220712071716131.png)
+![images/image-20220712071716131](images/image-20220712071716131.png)
 
 ```sql
 EXPLAIN SELECT id FROM t1;
 ```
 
-![image-20220712072055566](image-20220712072055566.png)
+![images/image-20220712072055566](images/image-20220712072055566.png)
 
 
 
@@ -2726,11 +2726,11 @@ EXPLAIN SELECT id FROM t1;
 EXPLAIN SELECT * FROM t4 WHERE content1 > 'z' AND content1 LIKE '%a';
 ```
 
-![image-20220710180257692](image-20220710180257692.png)
+![images/image-20220710180257692](images/image-20220710180257692.png)
 
 **注意：**如果这里的查询条件`只有content1 > 'z'`，那么找到满足条件的索引后也会进行一次索引下推的操作，判断content1 > 'z'是否成立（这是源码中为了编程方便做的冗余判断）
 
-![image-20220712012108900](image-20220712012108900.png)
+![images/image-20220712012108900](images/image-20220712012108900.png)
 
 
 
@@ -2740,7 +2740,7 @@ EXPLAIN SELECT * FROM t4 WHERE content1 > 'z' AND content1 LIKE '%a';
 EXPLAIN  SELECT * FROM t1, t2 WHERE t1.content = t2.content;
 ```
 
-![image-20220710182356817](image-20220710182356817.png)
+![images/image-20220710182356817](images/image-20220710182356817.png)
 
 下面这个例子就是被驱动表使用了索引：
 
@@ -2748,7 +2748,7 @@ EXPLAIN  SELECT * FROM t1, t2 WHERE t1.content = t2.content;
 EXPLAIN SELECT * FROM t_emp, t_dept WHERE t_dept.id = t_emp.deptId;
 ```
 
-![image-20220710182524371](image-20220710182524371.png)
+![images/image-20220710182524371](images/image-20220710182524371.png)
 
 
 
@@ -2793,7 +2793,7 @@ EXPLAIN SELECT * FROM t_emp, t_dept WHERE t_dept.id = t_emp.deptId;
 
 使用pref 工具分析哪些函数引发的cpu过高来追踪定位
 
-![image-20221106160437906](image-20221106160437906.png)
+![images/image-20221106160437906](images/image-20221106160437906.png)
 
 
 
@@ -2851,9 +2851,9 @@ EXPLAIN SELECT * FROM t_emp, t_dept WHERE t_dept.id = t_emp.deptId;
 
 #### 140 	说一下读写分离常见方案？
 
-![image-20221106171251532](image-20221106171251532.png)
+![images/image-20221106171251532](images/image-20221106171251532.png)
 
-![image-20221106171945037](image-20221106171945037.png)
+![images/image-20221106171945037](images/image-20221106171945037.png)
 
 
 
