@@ -897,8 +897,8 @@ EXPLAIN SELECT * FROM emp WHERE emp.name IS NOT NULL
 ## 二 MySQL 内部技术架构
 
 ![images/image-20221028155608009](images/image-20221028155608009.png)
-
-### ![img](29f7e85dea17e100b38b450d9949a330.png)047 Mysql内部支持缓存查询吗？
+![images/29f7e85dea17e100b38b450d9949a330](images/29f7e85dea17e100b38b450d9949a330.png)
+### 047 Mysql内部支持缓存查询吗？
 
 当MySQL接收到客户端的查询SQL之后，仅仅只需要对其进行相应的权限验证之后，就会通过Query Cache来查找结果，甚至都不需要经过Optimizer模块进行执行计划的分析优化，更不需要发生任何存储引擎的交互
 
@@ -1017,7 +1017,8 @@ MySQL服务器之外的客户端程序，与具体的语言相关，例如Java�
 
 1.5、查询流程说明
 
-![images/image-20220627141453944](执行流程.png)
+![images/执行流程](images/执行流程.png)
+
 
 **首先，**`MySQL客户端通过协议与MySQL服务器建连接，通过SQL接口发送SQL语句，先检查查询缓存，如果命中，直接返回结果，否则进行语句解析。`也就是说，在解析查询之前，服务器会先访问查询缓存，如果某个查询结果已经位于缓存中，服务器就不会再对查询进行解析、优化、以及执行。它仅仅将缓存中的结果返回给用户即可，这将大大提高系统的性能。
 
@@ -1150,8 +1151,8 @@ https://dev.mysql.com/doc/refman/5.7/en/innodb-architecture.html
 
 下面是官方的InnoDB引擎结构图，主要分为内存结构和磁盘结构两大部分。
 
-![img](16701032-f8547d110ba34135.png)
 
+![images/16701032-f8547d110ba34135](images/16701032-f8547d110ba34135.png)
 
 
 **内存区域**
@@ -1504,7 +1505,9 @@ MVCC 的实现依赖于：隐藏字段、Read View、undo log
 
 https://dev.mysql.com/doc/refman/8.0/en/xa.html
 
-![在这里插入图片描述](2021110810071449.png)
+
+![images/2021110810071449](images/2021110810071449.png)
+
 
 - AP（Application Program）：应用程序，定义事务边界（定义事务开始和结束）并访问事务边界内的资源。
 - RM（Resource Manger）资源管理器: 管理共享资源并提供外部访问接口。供外部程序来访问数据库等共享资源。此外，RM还具有事务的回滚能力。
@@ -1736,10 +1739,9 @@ binlog 写入策略：
 很显然三种模式下，sync_binlog=1 是强一致的选择，选择0或者N的情况下在极端情况下就会有丢失日志的风险，具体选择什么模式还是得看系统对于一致性的要求。
 
 
+![images/16701032-f8547d110ba34135](images/16701032-f8547d110ba34135.png)
 
 
-
-![img](16701032-f8547d110ba34135.png)
 
 **innodb_flush_log_at_trx_commit**
 
@@ -1781,7 +1783,8 @@ redo log 的写入拆成了两个步骤：prepare 和 commit
 
 - **commit**：binlog写入log buffer，并fsync持久化到磁盘，在binlog事务中记录2PC的XID，同时在redolog事务打上commit标识
 
-![img](v2-a48d01fd3478ba4d68207fc7ce757658_r.jpg)
+![images/v2-a48d01fd3478ba4d68207fc7ce757658_r](images/v2-a48d01fd3478ba4d68207fc7ce757658_r.jpg)
+
 
 ### 100 MySQL的binlog有有几种录入格式？分别有什么区别？
 
@@ -2832,14 +2835,15 @@ EXPLAIN SELECT * FROM t_emp, t_dept WHERE t_dept.id = t_emp.deptId;
 
 大数据量下可以配合es完成高效查询
 
-#### 137 	说一下实现分库分表工具的实现思路
+#### 137 	说一下实现\的实现思路
 
 1. 伪装成mysql服务器，代理用户请求转发到真实服务器
 2. 基于本地aop实现，拦截sql，改写，路由和结果归集处理。
 
 #### 138 	用过哪些分库分表工具？
 
-![img](25723371_16499183725J8d.png)
+![images/25723371_16499183725J8d](images/25723371_16499183725J8d.png)
+
 
 #### 139 	分库分表后可能会有哪些问题？
 
